@@ -14,7 +14,13 @@ resource "proxmox_virtual_environment_vm" "node" {
   bios                = "ovmf"
   scsi_hardware       = "virtio-scsi-pci"
   timeout_shutdown_vm = 300
-
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+  }
   memory {
     dedicated = var.memory
   }
