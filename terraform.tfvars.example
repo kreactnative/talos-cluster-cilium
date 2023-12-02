@@ -1,0 +1,29 @@
+# Valid values are intel/amd
+system_type="intel"
+
+# Hypervisor config
+PROXMOX_API_ENDPOINT = "https://192.168.0.103:8006/api2/json"
+PROXMOX_USERNAME     = "root"
+PROXMOX_PASSWORD     = "password"
+PROXMOX_IP           = "192.168.0.100"
+DEFAULT_BRIDGE       = "vmbr0"
+TARGET_NODE          = "pve"
+
+# Cluster config
+MASTER_COUNT = 1
+WORKER_COUNT = 1
+autostart    = true
+master_config = {
+  memory  = "2048"
+  vcpus   = 2
+  sockets = 1
+}
+worker_config = {
+  memory  = "2048"
+  vcpus   = 2
+  sockets = 1
+}
+
+# HA Proxy config
+ha_proxy_server = "192.168.0.101"
+ha_proxy_user   = "wireproxy"
