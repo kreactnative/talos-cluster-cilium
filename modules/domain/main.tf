@@ -19,6 +19,9 @@ resource "proxmox_virtual_environment_vm" "node" {
       ipv4 {
         address = "dhcp"
       }
+      ipv6 {
+        address = "dhcp"
+      }
     }
   }
   memory {
