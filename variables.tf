@@ -81,13 +81,17 @@ variable "worker_config" {
   })
 }
 
-# HA Proxy config
-variable "ha_proxy_server" {
-  description = "IP address of server running haproxy"
-  type        = string
+
+variable "elb_hostname" {
+  type    = string
+  default = "load-balancer"
 }
 
-variable "ha_proxy_user" {
-  description = "User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service"
-  type        = string
+variable "elb_ip" {
+  type    = string
+  default = "192.168.1.200"
+}
+variable "elb_user" {
+  type    = string
+  default = "rocky"
 }

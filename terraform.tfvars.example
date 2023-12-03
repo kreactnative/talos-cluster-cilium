@@ -24,6 +24,7 @@ worker_config = {
   sockets = 1
 }
 
-# HA Proxy config
-ha_proxy_server = "192.168.0.101"
-ha_proxy_user   = "wireproxy"
+# nginx proxy config
+elb_ip = "192.168.0.200"
+elb_hostname ="load-balancer"
+elb_user   = "rocky"

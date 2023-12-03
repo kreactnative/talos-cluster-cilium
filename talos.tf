@@ -1,33 +1,14 @@
 
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0.2"
-    }
-    proxmox = {
-      source  = "bpg/proxmox"
-      version = "0.38.1"
-    }
-  }
-}
 
-provider "proxmox" {
-  endpoint = var.PROXMOX_API_ENDPOINT
-  username = "${var.PROXMOX_USERNAME}@pam"
-  password = var.PROXMOX_PASSWORD
-  insecure = true
-}
-
-/*data "external" "versions" {
+data "external" "versions" {
   program = ["${path.module}/scripts/versions.sh"]
-}*/
+}
 
 locals {
-  qemu_ga_version     = "8.1.3"    //data.external.versions.result["qemu_ga_version"]
-  amd_ucode_version   = "20231111" //data.external.versions.result["amd_ucode_version"]
-  intel_ucode_version = "20230808" //data.external.versions.result["intel_ucode_version"]
-  imager_version      = "v1.5.5"   //data.external.versions.result["imager_version"]
+  qemu_ga_version     = data.external.versions.result["qemu_ga_version"]
+  amd_ucode_version   = data.external.versions.result["amd_ucode_version"]
+  intel_ucode_version = data.external.versions.result["intel_ucode_version"]
+  imager_version      = data.external.versions.result["imager_version"]
   system_command = var.system_type == "amd" ? [
     "metal",
     "--system-extension-image",
@@ -162,7 +143,7 @@ resource "local_file" "haproxy_config" {
     module.master_domain.node,
     module.worker_domain.node
   ]
-  content = templatefile("${path.root}/templates/haproxy.tmpl",
+  content = templatefile("${path.root}/templates/nginx.tmpl",
     {
       node_map_masters = zipmap(
         tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
@@ -172,26 +153,26 @@ resource "local_file" "haproxy_config" {
       )
     }
   )
-  filename = "haproxy.cfg"
+  filename = "nginx.conf"
 
   provisioner "file" {
-    source      = "${path.root}/haproxy.cfg"
-    destination = "/etc/haproxy/haproxy.cfg"
+    source      = "${path.root}/nginx.cfg"
+    destination = "/etc/nginx/nginx.conf"
     connection {
       type        = "ssh"
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
+      host        = var.elb_ip
+      user        = var.elb_user
       private_key = file("~/.ssh/id_rsa")
     }
   }
 
   provisioner "remote-exec" {
     connection {
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
+      host        = var.elb_ip
+      user        = var.elb_user
       private_key = file("~/.ssh/id_rsa")
     }
-    script = "${path.root}/scripts/haproxy.sh"
+    script = "${path.root}/scripts/nginx.sh"
   }
 }
 
@@ -202,7 +183,7 @@ resource "local_file" "talosctl_config" {
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
-      load_balancer      = var.ha_proxy_server,
+      load_balancer      = var.elb_ip,
       node_map_masters   = tolist(module.master_domain.*.address),
       node_map_workers   = tolist(module.worker_domain.*.address)
       primary_controller = module.master_domain[0].address

@@ -28,7 +28,7 @@ resource "proxmox_virtual_environment_vm" "node" {
 
   cpu {
     cores   = var.vcpus
-    type    = "x86-64-v2"
+    type    = "host"
     sockets = var.sockets
   }
 
