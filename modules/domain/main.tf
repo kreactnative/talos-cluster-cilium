@@ -18,9 +18,7 @@ resource "proxmox_virtual_environment_vm" "node" {
     ip_config {
       ipv4 {
         address = "dhcp"
-      }
-      ipv6 {
-        address = "dhcp"
+        gateway = "192.168.1.1"
       }
     }
   }

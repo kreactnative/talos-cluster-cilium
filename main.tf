@@ -26,8 +26,8 @@ provider "proxmox" {
 locals {
   qemu_ga_version     = "8.1.3"    //data.external.versions.result["qemu_ga_version"]
   amd_ucode_version   = "20231111" //data.external.versions.result["amd_ucode_version"]
-  intel_ucode_version = "20231114" //data.external.versions.result["intel_ucode_version"]
-  imager_version      = "latest"   //data.external.versions.result["imager_version"]
+  intel_ucode_version = "20230808" //data.external.versions.result["intel_ucode_version"]
+  imager_version      = "v1.5.5"   //data.external.versions.result["imager_version"]
   system_command = var.system_type == "amd" ? [
     "metal",
     "--system-extension-image",
