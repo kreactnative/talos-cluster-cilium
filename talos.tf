@@ -32,7 +32,7 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output && rm -f talos_setup.sh haproxy.cfg talosconfig worker.yaml controlplane.yaml"
+    command     = "mkdir -p output && rm -f talos_setup.sh nginx.conf talosconfig worker.yaml controlplane.yaml"
     working_dir = path.root
   }
 }
@@ -138,7 +138,7 @@ module "worker_domain" {
   target_node    = var.TARGET_NODE
 }
 
-resource "local_file" "haproxy_config" {
+resource "local_file" "nginx_config" {
   depends_on = [
     module.master_domain.node,
     module.worker_domain.node
@@ -148,16 +148,13 @@ resource "local_file" "haproxy_config" {
       node_map_masters = zipmap(
         tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
       ),
-      node_map_workers = zipmap(
-        tolist(module.worker_domain.*.address), tolist(module.worker_domain.*.name)
-      )
     }
   )
   filename = "nginx.conf"
 
   provisioner "file" {
-    source      = "${path.root}/nginx.cfg"
-    destination = "/etc/nginx/nginx.conf"
+    source      = "${path.root}/nginx.conf"
+    destination = "/tmp/nginx.conf"
     connection {
       type        = "ssh"
       host        = var.elb_ip
@@ -179,7 +176,8 @@ resource "local_file" "haproxy_config" {
 resource "local_file" "talosctl_config" {
   depends_on = [
     module.master_domain.node,
-    module.worker_domain.node
+    module.worker_domain.node,
+    resource.local_file.nginx_config
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {

@@ -5,9 +5,9 @@ events {
 
 stream {
     upstream k8s_servers {
-        %{ for node_host, node_hostname in node_map_masters ~}
-        server ${node_host}:6443;
-        %{endfor}
+    %{ for node_host, node_hostname in node_map_masters ~}
+    server ${node_host}:6443;
+    %{endfor}
     }
 
     server {

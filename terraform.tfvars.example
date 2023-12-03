@@ -6,7 +6,7 @@ PROXMOX_API_ENDPOINT = "https://192.168.0.103:8006/api2/json"
 PROXMOX_USERNAME     = "root"
 PROXMOX_PASSWORD     = "password"
 PROXMOX_IP           = "192.168.0.100"
-DEFAULT_BRIDGE       = "vmbr0"
+DEFAULT_BRIDGE       = "vmbr1"
 TARGET_NODE          = "pve"
 
 # Cluster config

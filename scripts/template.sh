@@ -2,7 +2,7 @@ BOOTDISK=scsi0
 qm destroy 8000 || true
 xz -v -d talos/talos.raw.xz
 sleep 3
-qm create 8000 --memory 2048 --net0 virtio,bridge=vmbr0 --agent 1 --cores 2 --sockets 1 --cpu cputype=x86-64-v2
+qm create 8000 --memory 2048 --net0 virtio,bridge=vmbr1 --agent 1 --cores 2 --sockets 1 --cpu cputype=host
 qm importdisk 8000 talos/talos.raw local-lvm
 qm set 8000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-8000-disk-0,cache=writeback,discard=on
 qm set 8000 --boot c --bootdisk $BOOTDISK
