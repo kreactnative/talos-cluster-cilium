@@ -3,7 +3,6 @@ n=0
 retries=5
 
 echo "update  nginx config"
-
 sudo rm -rf /etc/nginx/nginx.conf
 sudo cp /tmp/nginx.conf /etc/nginx/nginx.conf
 

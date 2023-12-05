@@ -81,10 +81,13 @@ variable "worker_config" {
   })
 }
 
-
-variable "elb_hostname" {
-  type    = string
-  default = "load-balancer"
+variable "elb_config" {
+  description = "Load balance config"
+  type = object({
+    memory  = string
+    vcpus   = number
+    sockets = number
+  })
 }
 
 variable "elb_ip" {
