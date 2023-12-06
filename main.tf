@@ -41,7 +41,7 @@ resource "docker_container" "imager" {
 
   depends_on = [
     null_resource.cleanup,
-    #data.external.versions
+    data.external.versions
   ]
 
   image      = docker_image.imager.image_id
