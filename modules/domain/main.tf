@@ -14,6 +14,9 @@ resource "proxmox_virtual_environment_vm" "node" {
   bios                = "ovmf"
   scsi_hardware       = "virtio-scsi-pci"
   timeout_shutdown_vm = 300
+
+  tags = ["talos", "k8s"]
+
   initialization {
     ip_config {
       ipv4 {

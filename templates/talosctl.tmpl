@@ -1,8 +1,7 @@
 #!/bin/bash
-talosctl machineconfig gen talos-ha-cilium https://${load_balancer}:6443
+talosctl gen config talos-ha-cilium https://${load_balancer}:6443  --config-patch @cni.yaml
 sleep 3
-# talosctl machineconfig patch controlplane.yaml --patch @patch.yaml -o controlplane.yaml
-# sleep 3
+
 %{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
 echo "Applied controller config to ${node_host}"
