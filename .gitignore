@@ -42,3 +42,4 @@ haproxy.cfg
 talos_setup.sh
 talosconfig
 worker.yaml
+cilium.sh

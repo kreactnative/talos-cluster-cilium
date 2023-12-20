@@ -17,6 +17,12 @@ talosctl bootstrap --nodes ${primary_controller} -e ${primary_controller} --talo
 echo "Started bootstrap process"
 sleep 30
 
+# Update kubeconfig
+talosctl kubeconfig $HOME/.kube/talos-ha-cilium-config --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig --force
+echo "Updated kubeconfig"
+export KUBECONFIG=$HOME/.kube/talos-ha-cilium-config
+./cilium.sh
+
 # Health check
 n=0
 retries=5
@@ -28,8 +34,4 @@ until [ "$n" -ge "$retries" ]; do
     sleep 5
   fi
 done
-
-# Update kubeconfig
-talosctl kubeconfig $HOME/.kube/talos-ha-cilium-config --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig --force
-echo "Updated kubeconfig"
 echo "Successfully created cluster"

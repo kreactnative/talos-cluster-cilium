@@ -173,11 +173,27 @@ resource "local_file" "nginx_config" {
   }
 }
 
-resource "local_file" "talosctl_config" {
+resource "local_file" "cilium_config" {
   depends_on = [
     module.master_domain.node,
     module.worker_domain.node,
     resource.local_file.nginx_config
+  ]
+  content = templatefile("${path.root}/templates/cilium.tmpl",
+    {
+      load_balancer      = var.elb_ip,
+    }
+  )
+  filename        = "cilium.sh"
+  file_permission = "755"
+}
+
+resource "local_file" "talosctl_config" {
+  depends_on = [
+    module.master_domain.node,
+    module.worker_domain.node,
+    resource.local_file.nginx_config,
+    resource.local_file.cilium_config
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
