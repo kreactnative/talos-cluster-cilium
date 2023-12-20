@@ -4,27 +4,31 @@ system_type = "intel"
 # Hypervisor config
 PROXMOX_API_ENDPOINT = "https://192.168.1.9:8006/api2/json"
 PROXMOX_USERNAME     = "root"
-PROXMOX_PASSWORD     = "56255625"
+PROXMOX_PASSWORD     = "changeme"
 PROXMOX_IP           = "192.168.1.9"
 DEFAULT_BRIDGE       = "vmbr0"
 TARGET_NODE          = "pve"
 
 # Cluster config
-MASTER_COUNT = 5
-WORKER_COUNT = 2
+MASTER_COUNT = 3
+WORKER_COUNT = 3
 autostart    = true
+elb_config = {
+  memory  = "4096"
+  vcpus   = 2
+  sockets = 1
+}
 master_config = {
-  memory  = "2048"
+  memory  = "4096"
   vcpus   = 2
   sockets = 1
 }
 worker_config = {
-  memory  = "2048"
-  vcpus   = 2
+  memory  = "16384"
+  vcpus   = 8
   sockets = 1
 }
 
 # nginx proxy
-elb_hostname = "load-balancer"
-elb_ip       = "192.168.1.200"
-elb_user     = "rocky"
+elb_ip   = "192.168.1.200"
+elb_user = "rocky"
