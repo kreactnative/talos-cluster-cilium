@@ -1,6 +1,8 @@
 #!/bin/bash
 talosctl gen config talos-ha-cilium https://${load_balancer}:6443  --config-patch @cni.yaml
-sleep 3
+sleep 10
+sed -i "" "s/# allowSchedulingOnControlPlanes/allowSchedulingOnControlPlanes/g" controlplane.yaml
+sleep 10
 
 %{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
