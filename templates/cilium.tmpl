@@ -1,4 +1,8 @@
+kubectl -n kube-system delete ds kube-proxy
+kubectl -n kube-system delete cm kube-proxy
+
 helm repo add cilium https://helm.cilium.io/
+helm repo update
 helm upgrade --install cilium cilium/cilium \
     --namespace kube-system \
     --set ipam.mode=kubernetes \

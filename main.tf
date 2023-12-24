@@ -32,7 +32,7 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output && rm -f talos_setup.sh nginx.conf talosconfig worker.yaml controlplane.yaml"
+    command     = "mkdir -p output && rm -f talos_setup.sh nginx.conf talosconfig worker.yaml controlplane.yaml metallb.yaml"
     working_dir = path.root
   }
 }
@@ -181,7 +181,7 @@ resource "local_file" "cilium_config" {
   ]
   content = templatefile("${path.root}/templates/cilium.tmpl",
     {
-      load_balancer      = var.elb_ip,
+      load_balancer = var.elb_ip,
     }
   )
   filename        = "cilium.sh"
@@ -207,9 +207,33 @@ resource "local_file" "talosctl_config" {
   file_permission = "755"
 }
 
+resource "local_file" "metallb_config" {
+  depends_on = [
+    module.master_domain.node,
+    module.worker_domain.node,
+    resource.local_file.nginx_config,
+    resource.local_file.cilium_config
+  ]
+  content = templatefile("${path.root}/templates/metallb.tmpl",
+    {
+      load_balancer      = var.elb_ip,
+      node_map_masters   = tolist(module.master_domain.*.address),
+      node_map_workers   = tolist(module.worker_domain.*.address)
+      primary_controller = module.master_domain[0].address
+    }
+  )
+  filename = "metallb.yaml"
+}
+
 resource "null_resource" "create_cluster" {
-  depends_on = [local_file.talosctl_config]
+  depends_on = [local_file.talosctl_config, local_file.metallb_config]
   provisioner "local-exec" {
     command = "/bin/bash talos_setup.sh"
+  }
+}
+resource "null_resource" "install_k8s" {
+  depends_on = [local_file.talosctl_config, local_file.metallb_config, null_resource.create_cluster]
+  provisioner "local-exec" {
+    command = "/bin/bash scripts/k8s.sh"
   }
 }

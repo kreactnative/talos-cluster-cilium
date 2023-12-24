@@ -44,3 +44,4 @@ talosconfig
 worker.yaml
 cilium.sh
 nginx.conf
+metallb.yaml
