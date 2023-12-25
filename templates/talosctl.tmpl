@@ -39,13 +39,11 @@ done
 
 
 export KUBECONFIG=$HOME/.kube/talos-ha-cilium-config
-kubectl config current-context
+kubectl config current-
+echo "start create namespace"
+kubectl apply -f k8s/namespace.yaml
 echo "start install cilium"
 ./cilium.sh
 echo "start install metrics-server"
-helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
-helm repo update
-helm upgrade --install --namespace kube-system -f k8s/metrics.yaml metrics-server metrics-server/metrics-server
-
-
+kubectl apply -f k8s/metrics-server
 echo "Successfully created cluster"

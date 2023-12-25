@@ -4,7 +4,7 @@ kubectl -n kube-system delete cm kube-proxy
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm upgrade --install cilium cilium/cilium \
-    --namespace kube-system \
+    --namespace cilium \
     --set ipam.mode=kubernetes \
     --set bpf.masquerade=true \
     --set encryption.nodeEncryption=false \
